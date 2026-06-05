@@ -1,8 +1,9 @@
-import { redirect, notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getSession } from '@/lib/auth'
-import { assetApi, ApiError } from '@/lib/api'
+import { assetApi, dashboardApi, ApiError } from '@/lib/api'
 import Logomark from '@/components/Logomark'
+import AssetRegistration from '@/components/AssetRegistration'
 
 function formatDate(ms: number | undefined): string {
   if (!ms) return '—'
@@ -33,6 +34,7 @@ export default async function AssetPage({ params }: PageProps<'/asset/[tagId]'>)
   let asset = null
   let inspections: Awaited<ReturnType<typeof assetApi.getInspections>> = []
   let deficiencies: Awaited<ReturnType<typeof assetApi.getDeficiencies>> = []
+  let notFound = false
 
   try {
     [asset, inspections, deficiencies] = await Promise.all([
@@ -41,14 +43,20 @@ export default async function AssetPage({ params }: PageProps<'/asset/[tagId]'>)
       assetApi.getDeficiencies(tagId, session.accessToken),
     ])
   } catch (err) {
-    if (err instanceof ApiError && err.status === 404) notFound()
-    // Other errors — show page with error state
+    if (err instanceof ApiError && err.status === 404) notFound = true
+  }
+
+  // Fetch sites for registration form
+  let sites: { id: string; name: string; city: string }[] = []
+  if (notFound) {
+    try {
+      const rawSites = await dashboardApi.getSites(session.accessToken)
+      sites = rawSites.map(s => ({ id: s.id, name: s.name, city: s.city }))
+    } catch { /* non-fatal */ }
   }
 
   return (
     <div className="min-h-screen bg-[#060E1A] text-white">
-
-      {/* Nav */}
       <nav className="flex items-center justify-between px-5 py-4 border-b border-white/5">
         <Link href="/dashboard" className="flex items-center gap-3">
           <Logomark size={24} />
@@ -64,14 +72,14 @@ export default async function AssetPage({ params }: PageProps<'/asset/[tagId]'>)
 
       <main className="px-5 py-8 max-w-lg mx-auto">
 
-        {!asset ? (
+        {notFound ? (
+          <AssetRegistration tagId={tagId} sites={sites} />
+        ) : !asset ? (
           <div className="text-center py-16">
-            <p className="text-sm text-white/30 mb-2">Asset not found</p>
-            <p className="text-xs text-white/20 font-mono">{tagId}</p>
+            <p className="text-sm text-white/30">Unable to load asset</p>
           </div>
         ) : (
           <>
-            {/* Asset header */}
             <div className="mb-8">
               <p className="text-[10px] font-mono text-white/25 uppercase tracking-widest mb-2">{tagId}</p>
               <h1 className="text-2xl font-semibold tracking-tight mb-1">{asset.name}</h1>
@@ -79,7 +87,6 @@ export default async function AssetPage({ params }: PageProps<'/asset/[tagId]'>)
               {asset.siteName && <p className="text-sm text-white/25 mt-0.5">{asset.siteName}</p>}
             </div>
 
-            {/* Status card */}
             <div className="bg-[#112240] border border-white/5 rounded-xl p-5 mb-5">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Compliance Status</p>
@@ -119,8 +126,7 @@ export default async function AssetPage({ params }: PageProps<'/asset/[tagId]'>)
               )}
             </div>
 
-            {/* Inspection history */}
-            {inspections.length > 0 && (
+            {inspections.length > 0 ? (
               <div className="bg-[#112240] border border-white/5 rounded-xl overflow-hidden">
                 <div className="px-5 py-4 border-b border-white/5">
                   <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Inspection History</p>
@@ -143,9 +149,7 @@ export default async function AssetPage({ params }: PageProps<'/asset/[tagId]'>)
                   </div>
                 ))}
               </div>
-            )}
-
-            {inspections.length === 0 && (
+            ) : (
               <div className="bg-[#112240] border border-white/5 rounded-xl px-5 py-10 text-center">
                 <p className="text-sm text-white/25">No inspections recorded yet</p>
               </div>

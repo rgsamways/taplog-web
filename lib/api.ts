@@ -202,6 +202,10 @@ export const assetApi = {
   getDeficiencies: (tagId: string, token: string) =>
     apiFetch<Deficiency[]>(`/api/v1/assets/tag/${tagId}/deficiencies`, {}, token),
 
-  create: (body: Partial<Asset>, token: string) =>
-    apiFetch<Asset>('/api/v1/assets', { method: 'POST', body: JSON.stringify(body) }, token),
+  create: (body: {
+    id: string; nfc_tag_id: string; site_id: string; name: string
+    asset_type: string; location: string; install_date: number
+    is_active?: boolean; created_at: number
+  }, token: string) =>
+    apiFetch<{ id: string; synced_at: number }>('/api/v1/assets', { method: 'POST', body: JSON.stringify(body) }, token),
 }
