@@ -2,8 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { authApi, ApiError } from '@/lib/api'
-import { createSession } from '@/lib/auth'
-import { randomUUID } from 'crypto'
+import { createSession, getOrCreateDeviceId } from '@/lib/auth'
 
 type State = { error: string } | undefined
 
@@ -16,7 +15,7 @@ export async function loginAction(state: State, formData: FormData): Promise<Sta
     return { error: 'Email and password are required.' }
   }
 
-  const deviceId = randomUUID()
+  const deviceId = await getOrCreateDeviceId()
 
   try {
     const loginRes = await authApi.login({

@@ -60,3 +60,20 @@ export async function deleteSession(): Promise<void> {
   const store = await cookies()
   store.delete('taplog_session')
 }
+
+export async function getOrCreateDeviceId(): Promise<string> {
+  const store = await cookies()
+  const existing = store.get('taplog_device_id')?.value
+  if (existing) return existing
+
+  const { randomUUID } = await import('crypto')
+  const id = randomUUID()
+  store.set('taplog_device_id', id, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 365 * 24 * 60 * 60, // 1 year
+    sameSite: 'lax',
+    path: '/',
+  })
+  return id
+}
