@@ -35,7 +35,7 @@ export default async function RootPage() {
           <span className="text-white/40">Compliance is one tap away.</span>
         </h1>
         <p className="text-lg font-light text-white/50 max-w-xl mb-10 leading-relaxed">
-          TapLog turns any phone into a certified inspection tool. Tap an NFC tag on a physical asset — fire extinguisher, fall anchor, pressure vessel — and the inspection record is logged instantly. No signal required.
+          TapLog connects physical assets to their inspection records. Tap an NFC tag on a fire extinguisher, fall anchor, or pressure vessel — and the full compliance history is there instantly. For inspectors in the field and building owners who need proof.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="/signup" className="inline-flex items-center justify-center bg-teal-400 hover:bg-teal-300 text-white font-medium px-6 py-3 rounded-lg transition-colors text-sm">
