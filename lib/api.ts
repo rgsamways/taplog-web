@@ -14,7 +14,13 @@ async function apiFetch<T>(
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }))
-    throw new ApiError(res.status, err.detail ?? 'Request failed')
+    const detail = err.detail
+    const message = Array.isArray(detail)
+      ? detail.map((d: { msg?: string }) => d.msg ?? JSON.stringify(d)).join(', ')
+      : typeof detail === 'string'
+      ? detail
+      : res.statusText
+    throw new ApiError(res.status, message)
   }
   return res.json() as Promise<T>
 }
