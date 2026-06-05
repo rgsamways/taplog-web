@@ -4,14 +4,15 @@ import { useActionState, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import Logomark from '@/components/Logomark'
-import { verifyAction, resendAction } from './actions'
+import { verifyAction, verifyDeviceAction, resendAction } from './actions'
 
 function VerifyForm() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email') ?? ''
   const next = searchParams.get('next') ?? '/dashboard'
   const isDevice = searchParams.get('type') === 'device'
-  const [state, action, pending] = useActionState(verifyAction, undefined)
+  const deviceId = searchParams.get('device_id') ?? ''
+  const [state, action, pending] = useActionState(isDevice ? verifyDeviceAction : verifyAction, undefined)
   const [resent, setResent] = useState(false)
 
   async function handleResend() {
@@ -44,6 +45,7 @@ function VerifyForm() {
         <form action={action} className="space-y-4">
           <input type="hidden" name="email" value={email} />
           <input type="hidden" name="next" value={next} />
+          {isDevice && <input type="hidden" name="device_id" value={deviceId} />}
 
           <div>
             <label htmlFor="code" className="block text-xs font-medium text-white/50 uppercase tracking-widest mb-1.5">

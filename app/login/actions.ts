@@ -42,7 +42,7 @@ export async function loginAction(state: State, formData: FormData): Promise<Sta
       if (err.status === 401) return { error: 'Invalid email or password.' }
       if (err.status === 403) {
         // New device challenge — backend sent a verification code to email
-        redirect(`/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(`/login?next=${encodeURIComponent(next)}`)}&type=device`)
+        redirect(`/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&type=device&device_id=${deviceId}`)
       }
       return { error: err.message }
     }

@@ -69,14 +69,21 @@ export interface LoginResponse {
 }
 
 export interface RegisterDeviceRequest {
+  email: string
+  code: string
   device_id: string
   device_name: string
-  platform: 'web'
 }
 
 export interface RegisterDeviceResponse {
   access_token: string
-  refresh_token?: string
+  refresh_token: string
+  inspector_id: string
+  name: string
+  email: string
+  cert_number?: string
+  organisation_id?: string
+  roles?: string[]
 }
 
 export const authApi = {
@@ -104,11 +111,11 @@ export const authApi = {
       body: JSON.stringify(body),
     }),
 
-  registerDevice: (body: RegisterDeviceRequest, token: string) =>
+  registerDevice: (body: RegisterDeviceRequest) =>
     apiFetch<RegisterDeviceResponse>('/api/v1/auth/register-device', {
       method: 'POST',
       body: JSON.stringify(body),
-    }, token),
+    }),
 
   refresh: (refreshToken: string) =>
     apiFetch<LoginResponse>('/api/v1/auth/refresh', {
