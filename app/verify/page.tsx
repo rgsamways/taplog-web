@@ -80,7 +80,11 @@ function VerifyForm() {
         </form>
 
         <div className="mt-6 text-center">
-          {resent ? (
+          {isDevice ? (
+            <a href="/login" className="text-sm text-white/40 hover:text-white/70 transition-colors">
+              Go back to sign in to get a new code
+            </a>
+          ) : resent ? (
             <p className="text-sm text-teal-300">Code resent — check your email.</p>
           ) : (
             <button
