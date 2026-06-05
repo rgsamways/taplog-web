@@ -53,6 +53,8 @@ export interface VerifyEmailRequest {
 export interface LoginRequest {
   email: string
   password: string
+  device_id: string
+  device_name: string
 }
 
 export interface LoginResponse {

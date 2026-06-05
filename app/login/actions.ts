@@ -17,23 +17,16 @@ export async function loginAction(state: State, formData: FormData): Promise<Sta
   }
 
   try {
-    const loginRes = await authApi.login({ email, password })
-
-    // Register this browser as a device
     const deviceId = randomUUID()
-    let accessToken = loginRes.access_token
-    let refreshToken = loginRes.refresh_token
+    const loginRes = await authApi.login({
+      email,
+      password,
+      device_id: deviceId,
+      device_name: 'TapLog Web',
+    })
 
-    try {
-      const deviceRes = await authApi.registerDevice(
-        { device_id: deviceId, device_name: 'TapLog Web', platform: 'web' },
-        accessToken
-      )
-      accessToken = deviceRes.access_token
-      refreshToken = deviceRes.refresh_token ?? refreshToken
-    } catch {
-      // Device registration failure is non-fatal — proceed with original token
-    }
+    const accessToken = loginRes.access_token
+    const refreshToken = loginRes.refresh_token
 
     await createSession({
       inspectorId: loginRes.inspector_id,
