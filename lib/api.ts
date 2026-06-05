@@ -64,6 +64,7 @@ export interface LoginResponse {
   inspector_id: string
   name: string
   email: string
+  cert_number?: string
   roles?: string[]
   organisation_id?: string
 }

@@ -48,6 +48,7 @@ export async function verifyDeviceAction(state: State, formData: FormData): Prom
       name: res.name,
       roles: res.roles ?? ['INSPECTOR'],
       organisationId: res.organisation_id,
+      certNumber: res.cert_number,
       deviceId,
       accessToken: res.access_token,
       refreshToken: res.refresh_token,

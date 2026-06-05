@@ -32,6 +32,7 @@ export async function loginAction(state: State, formData: FormData): Promise<Sta
       name: loginRes.name,
       roles: loginRes.roles ?? ['INSPECTOR'],
       organisationId: loginRes.organisation_id,
+      certNumber: loginRes.cert_number,
       deviceId,
       accessToken: loginRes.access_token,
       refreshToken: loginRes.refresh_token,

@@ -7,11 +7,12 @@ const secret = new TextEncoder().encode(
 )
 
 export interface SessionPayload {
-  inspectorId: string
+  inspectorId: string  // kept for Android JWT compat — same value as userId
   email: string
   name: string
   roles: string[]
   organisationId?: string
+  certNumber?: string
   deviceId: string
   accessToken: string
   refreshToken?: string
