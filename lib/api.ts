@@ -125,6 +125,38 @@ export const authApi = {
     }),
 }
 
+// ── Dashboard ───────────────────────────────────────────────────────────────
+
+export interface DashboardStats {
+  activeAssets: number
+  dueSoon: number
+  openDeficiencies: number
+  recentScans: {
+    id: string
+    assetName: string
+    tagId: string
+    eventType: string
+    scannedAt: number
+  }[]
+}
+
+export interface Site {
+  id: string
+  name: string
+  address: string
+  city: string
+  province: string
+  isActive: boolean
+}
+
+export const dashboardApi = {
+  getStats: (token: string) =>
+    apiFetch<DashboardStats>('/api/v1/dashboard/stats', {}, token),
+
+  getSites: (token: string) =>
+    apiFetch<Site[]>('/api/v1/sites', {}, token),
+}
+
 // ── Assets ──────────────────────────────────────────────────────────────────
 
 export interface Asset {
@@ -136,18 +168,18 @@ export interface Asset {
   siteId: string
   siteName?: string
   organisationId: string
-  installDate?: string
-  nextInspectionDue?: string
+  installDate?: number
+  nextInspectionDue?: number
   isRetired: boolean
 }
 
 export interface Inspection {
   id: string
   assetId: string
-  inspectorId: string
   inspectorName: string
-  result: 'PASS' | 'DEFICIENCY' | 'FAIL'
-  timestamp: string
+  inspectorCertNumber?: string
+  result: 'PASS' | 'DEFICIENCY' | 'FAIL' | 'REQUIRES_ATTENTION'
+  timestamp: number
   notes?: string
 }
 
@@ -157,7 +189,7 @@ export interface Deficiency {
   description: string
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
   status: 'OPEN' | 'RESOLVED'
-  createdAt: string
+  createdAt: number
 }
 
 export const assetApi = {
