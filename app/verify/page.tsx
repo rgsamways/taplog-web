@@ -10,6 +10,7 @@ function VerifyForm() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email') ?? ''
   const next = searchParams.get('next') ?? '/dashboard'
+  const isDevice = searchParams.get('type') === 'device'
   const [state, action, pending] = useActionState(verifyAction, undefined)
   const [resent, setResent] = useState(false)
 
@@ -32,9 +33,11 @@ function VerifyForm() {
         </div>
 
         {/* Heading */}
-        <h1 className="text-2xl font-semibold text-white tracking-tight mb-1">Check your email</h1>
+        <h1 className="text-2xl font-semibold text-white tracking-tight mb-1">
+          {isDevice ? 'Verify new device' : 'Check your email'}
+        </h1>
         <p className="text-sm font-light text-white/40 mb-8">
-          We sent a 6-digit code to{' '}
+          {isDevice ? 'New browser detected. We sent a verification code to ' : 'We sent a 6-digit code to '}
           <span className="text-white/70">{email || 'your email'}</span>
         </p>
 
